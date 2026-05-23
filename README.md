@@ -1,3 +1,6 @@
+
+<img width="1672" height="941" alt="image" src="https://github.com/user-attachments/assets/09d69802-1720-48a0-81f7-7616c2caa981" />
+
 # 리설주 1.0
 
 [Hugging Face 모델](https://huggingface.co/jaehwan02/risolju-1.0)
