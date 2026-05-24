@@ -44,3 +44,7 @@ model = AutoModelForCausalLM.from_pretrained(
     torch_dtype="auto",
 )
 ```
+
+## 라이선스
+
+이 저장소와 공개 모델은 [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)에 따라 사용할 수 있습니다. 사용, 수정, 배포, 상업적 이용이 가능하며, 저작권 고지와 라이선스 문구를 유지해야 합니다.
