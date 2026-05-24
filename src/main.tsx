@@ -157,7 +157,7 @@ const MODEL_LIB_URL = new URL(
   window.location.origin
 ).href;
 const INITIAL_ASSISTANT_MESSAGE =
-  "모델을 로드하면 리설주 1.0과 바로 대화할 수 있습네다.";
+  "리설주 동무를 부르면 곧장 묻고 답할 수 있습네다.";
 const ASSISTANT_USER = {
   name: "리설주 1.0"
 };
@@ -287,7 +287,7 @@ function formatProgress(report: InitProgressReport) {
   }
 
   if (/finish|complete|loaded/i.test(rawText)) {
-    return "모델 로드 완료";
+    return "리설주 동무 출석";
   }
 
   return rawText;
@@ -297,7 +297,7 @@ function getStatusLabel(status: LoadState, progress: string) {
   if (status === "ready") return "전투준비 완료";
   if (status === "loading") return progress;
   if (status === "error") return progress;
-  return "모델 대기";
+  return "대기 중";
 }
 
 function toProgressPercent(progress: number) {
@@ -307,7 +307,7 @@ function toProgressPercent(progress: number) {
 
 function App() {
   const [status, setStatus] = useState<LoadState>("idle");
-  const [progress, setProgress] = useState("모델을 로드하지 않았습니다.");
+  const [progress, setProgress] = useState("리설주 동무를 아직 부르지 않았습니다.");
   const [loadProgress, setLoadProgress] = useState(0);
   const [isGenerating, setIsGenerating] = useState(false);
   const engineRef = useRef<Awaited<ReturnType<typeof CreateMLCEngine>> | null>(null);
@@ -335,7 +335,7 @@ function App() {
     if (status === "loading" || status === "ready") return;
 
     setStatus("loading");
-    setProgress("WebLLM 엔진 초기화 중...");
+    setProgress("대화마당 차리는 중...");
     setLoadProgress(0);
     try {
       const initProgressCallback = (report: InitProgressReport) => {
@@ -349,7 +349,7 @@ function App() {
         initProgressCallback
       });
       setStatus("ready");
-      setProgress("리설주 1.0 로드 완료");
+      setProgress("리설주 동무 출석");
       setLoadProgress(1);
     } catch (error) {
       console.error(error);
@@ -512,7 +512,7 @@ function App() {
                   ) : (
                     <Play size={17} />
                   )}
-                  <span>모델 로드</span>
+                  <span>리설주 동무 부르기</span>
                 </button>
               )}
               {showLoadProgress ? (
@@ -527,7 +527,7 @@ function App() {
                     aria-valuemin={0}
                     aria-valuemax={100}
                     aria-valuenow={progressPercent}
-                    aria-label="모델 로드 진행률"
+                    aria-label="리설주 동무 부르기 진행률"
                   >
                     <span style={{ width: `${progressPercent}%` }} />
                   </div>
@@ -543,7 +543,7 @@ function App() {
                 quickRepliesVisible={status === "ready" && !isGenerating}
                 onQuickReplyClick={handleQuickReplyClick}
                 onSend={handleSend}
-                placeholder={canSend ? "동무의 물음을 입력하시라요." : "모델 로드 후 입력할 수 있습네다."}
+                placeholder={canSend ? "동무의 물음을 입력하시라요." : "리설주 동무를 부른 뒤 입력할 수 있습네다."}
                 inputOptions={{ disabled: !canSend, maxRows: 5 }}
               />
             </div>
