@@ -1,0 +1,723 @@
+@font-face {
+  font-family: "WK Brush";
+  src: url("/fonts/WK-budgeul.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "WKR Gojik";
+  src: url("/fonts/WKR-gojik.ttf") format("truetype");
+  font-display: swap;
+}
+
+:root {
+  --black: #05070d;
+  --white: #ffffff;
+  --red: #c51708;
+  --red-dark: #941406;
+  --blue: #2e86d8;
+  --blue-deep: #1558a2;
+  --sky: #cce9ff;
+  --gold: #f8d766;
+  --green: #377634;
+  --ink: #581406;
+  --brand-1: #c51708;
+  --brand-2: #f8d766;
+  --brand-3: #e7f2ff;
+  --brand-4: #fff2e7;
+  --app-bg: #d8eefc;
+  --navbar-bg: transparent;
+  --footer-bg: #f7fbff;
+  --color-text-1: #481208;
+  --color-text-2: #8a2e17;
+  --color-text-3: #9b785f;
+  --color-fill-1: #ffffff;
+  --color-fill-2: #f9fbff;
+  --color-line-1: rgba(160, 33, 10, 0.18);
+  --color-line-2: rgba(37, 108, 180, 0.26);
+  --radius-sm: 3px;
+  --radius-md: 4px;
+  --gutter: 14px;
+  --msg-avatar-gap: 8px;
+  --rate-width: 34px;
+  --btn-primary-bg: #c51708;
+  --btn-primary-color: #ffffff;
+  --btn-border-radius: 3px;
+  font-family: "WKR Gojik", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-synthesis: none;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+body {
+  background:
+    linear-gradient(180deg, rgba(46, 134, 216, 0.34), rgba(255, 255, 255, 0.86) 360px),
+    #e8f6ff;
+}
+
+.appShell {
+  min-height: 100vh;
+  padding: 0 20px 28px;
+  background:
+    radial-gradient(circle at 65% 6%, rgba(255, 255, 255, 0.8), transparent 260px),
+    linear-gradient(180deg, #78bdf0 0, #cce9ff 320px, #f8fbff 620px);
+}
+
+.portalShell {
+  width: min(1400px, 100%);
+  margin: 0 auto;
+}
+
+.utilityBar {
+  height: 38px;
+  display: grid;
+  grid-template-columns: auto minmax(220px, 360px) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 28px;
+  padding: 0 18px;
+  color: #eef8ff;
+  background: linear-gradient(180deg, #69a9e6, #3d86d4);
+  border-bottom: 1px solid rgba(18, 73, 133, 0.48);
+  box-shadow: 0 2px 9px rgba(25, 91, 151, 0.28);
+  font-size: 17px;
+}
+
+.utilityLink,
+.languageStrip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  text-shadow: 0 1px 1px rgba(0, 53, 110, 0.55);
+}
+
+.searchBox {
+  height: 26px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 10px;
+  color: rgba(55, 102, 150, 0.72);
+  background: #fffdf5;
+  border: 2px solid rgba(109, 139, 168, 0.6);
+  border-radius: 999px;
+  box-shadow: inset 0 2px 6px rgba(14, 61, 116, 0.16);
+}
+
+.searchBox input {
+  min-width: 0;
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+}
+
+.languageStrip {
+  justify-content: flex-end;
+  gap: 20px;
+}
+
+.languageStrip span {
+  position: relative;
+}
+
+.languageStrip span + span::before {
+  position: absolute;
+  left: -12px;
+  color: rgba(255, 255, 255, 0.78);
+  content: "|";
+}
+
+.languageStrip span:first-of-type {
+  color: #ff3730;
+}
+
+.masthead {
+  position: relative;
+  min-height: 176px;
+  display: flex;
+  align-items: center;
+  padding: 18px clamp(18px, 3.2vw, 34px) 22px;
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(97, 174, 238, 0.03)),
+    url("/images/portal-masthead-bg.png") center 24% / cover no-repeat,
+    #91cef4;
+  border-left: 1px solid rgba(255, 255, 255, 0.76);
+  border-right: 1px solid rgba(255, 255, 255, 0.76);
+}
+
+.masthead::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.35), transparent 34%, rgba(0, 79, 171, 0.12));
+  pointer-events: none;
+}
+
+.siteMark {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  margin-left: clamp(98px, calc(78px + 7.9vw), 190px);
+}
+
+.siteMark h1 {
+  margin: 0;
+  color: #124c9b;
+  font-family: "WK Brush", "WKR Gojik", serif;
+  font-size: clamp(44px, 5.2vw, 72px);
+  font-weight: 400;
+  line-height: 0.94;
+  letter-spacing: 0;
+  white-space: nowrap;
+  text-shadow:
+    -2px -2px 0 #ffffff,
+    2px -2px 0 #ffffff,
+    -2px 2px 0 #ffffff,
+    2px 2px 0 #ffffff,
+    0 5px 0 rgba(18, 76, 155, 0.16);
+}
+
+.siteMark p {
+  margin: 8px 0 0;
+  color: #2c6fc1;
+  font-size: 22px;
+  font-weight: 760;
+  text-shadow: 0 1px 0 #ffffff;
+}
+
+.portalNav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(16px, 3vw, 42px);
+  min-height: 52px;
+  padding: 0 18px;
+  color: #fff8da;
+  background: linear-gradient(180deg, #df230f, #a81709);
+  border-top: 4px solid #0f63c0;
+  border-bottom: 4px solid #0f63c0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  font-size: 18px;
+  font-weight: 760;
+  white-space: nowrap;
+}
+
+.portalBody {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 20px;
+  min-height: calc(100vh - 294px);
+  padding: 18px 20px 24px;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.98)),
+    #ffffff;
+  border-left: 1px solid rgba(26, 89, 151, 0.22);
+  border-right: 1px solid rgba(26, 89, 151, 0.22);
+  box-shadow: 0 18px 40px rgba(48, 92, 126, 0.18);
+}
+
+.chatColumn {
+  min-width: 0;
+}
+
+.sectionBanner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  padding: 10px 14px;
+  color: #ffffff;
+  background: linear-gradient(180deg, #3f93db, #1d68b8);
+  border: 1px solid rgba(8, 63, 133, 0.42);
+  border-bottom: 0;
+}
+
+.sectionBanner strong {
+  min-width: 0;
+  color: #ffffff;
+  font-size: 18px;
+  line-height: 1.25;
+  text-shadow: 0 1px 1px rgba(8, 49, 104, 0.46);
+}
+
+.chatFrame {
+  height: calc(100vh - 360px);
+  height: calc(100dvh - 360px);
+  min-height: 0;
+  max-height: 620px;
+  overflow: hidden;
+  border: 1px solid rgba(37, 108, 180, 0.3);
+  background: #ffffff;
+}
+
+.sectionBanner.withProgress + .chatFrame {
+  height: calc(100vh - 392px);
+  height: calc(100dvh - 392px);
+}
+
+.ChatApp {
+  position: relative;
+  isolation: isolate;
+  font-family: "WKR Gojik", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #ffffff;
+}
+
+.ChatApp::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  content: "";
+  background:
+    linear-gradient(180deg, rgba(232, 246, 255, 0.85), rgba(255, 255, 255, 0.95) 170px),
+    repeating-linear-gradient(135deg, rgba(46, 134, 216, 0.05) 0 1px, transparent 1px 24px);
+}
+
+.loadPill,
+.commandButton {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 3px;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 760;
+}
+
+.loadPill {
+  max-width: 240px;
+  padding: 7px 10px;
+  overflow: hidden;
+  color: #7a1d0b;
+  background: #fffdf4;
+  border: 1px solid rgba(197, 23, 8, 0.28);
+}
+
+.loadPill span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.loadPill.ready {
+  color: #1558a2;
+}
+
+.loadPill.error {
+  color: #941406;
+}
+
+.loadProgress {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 6px;
+  color: #eaf6ff;
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+.loadProgressMeta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.loadProgressMeta span:first-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.loadProgressTrack {
+  height: 7px;
+  overflow: hidden;
+  background: rgba(12, 61, 121, 0.54);
+  border: 1px solid rgba(255, 255, 255, 0.36);
+  border-radius: 999px;
+  box-shadow: inset 0 1px 3px rgba(0, 22, 61, 0.35);
+}
+
+.loadProgressTrack span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #fff1b8, #ffffff);
+  border-radius: inherit;
+  transition: width 160ms ease;
+}
+
+.loadProgress.ready .loadProgressTrack span {
+  background: linear-gradient(90deg, #cfffbc, #ffffff);
+}
+
+.loadProgress.error {
+  color: #ffe6d8;
+}
+
+.loadProgress.error .loadProgressTrack span {
+  background: linear-gradient(90deg, #ffb099, #fff1e8);
+}
+
+.commandButton {
+  min-width: 108px;
+  border: 1px solid rgba(255, 255, 255, 0.44);
+  padding: 0 12px;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.loadButton {
+  background: linear-gradient(180deg, #d92712, #a81709);
+}
+
+.stopButton {
+  background: #2e5f2d;
+}
+
+.commandButton:disabled {
+  opacity: 0.62;
+  cursor: not-allowed;
+}
+
+.spin {
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.MessageList {
+  padding: 22px 18px 18px;
+}
+
+.Message-author {
+  color: #7f2d16;
+  font-weight: 760;
+}
+
+.Message.left .Avatar {
+  background: #fffef8;
+  border: 1px solid rgba(37, 108, 180, 0.34);
+}
+
+.Message.right .Avatar {
+  background: #c51708;
+}
+
+.Bubble {
+  max-width: min(760px, 84vw);
+  border: 1px solid rgba(37, 108, 180, 0.22);
+  border-radius: 3px;
+  box-shadow: 0 7px 18px rgba(88, 20, 6, 0.08);
+}
+
+.Bubble.text {
+  padding: 13px 15px;
+  color: #581406;
+  font-size: 16px;
+  line-height: 1.72;
+  white-space: pre-wrap;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.Bubble.text p {
+  margin: 0;
+}
+
+.Message.right .Bubble {
+  color: #fff8dc;
+  background: linear-gradient(180deg, #c8200e, #9f1608);
+  border-color: rgba(138, 26, 8, 0.78);
+}
+
+.Message.right .Bubble.text {
+  color: #fff8dc;
+}
+
+.Message.left .Bubble {
+  background: #fffdf8;
+}
+
+.QuickReplies {
+  padding: 10px 12px 12px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0), #fffdf6);
+}
+
+.QuickReply {
+  border-color: rgba(197, 23, 8, 0.28);
+  color: #7a1d0b;
+  background: #fffdf8;
+  border-radius: 3px;
+  box-shadow: 0 4px 12px rgba(88, 20, 6, 0.07);
+}
+
+.QuickReply.highlight {
+  color: #c51708;
+}
+
+.ChatFooter {
+  border-top: 1px solid rgba(37, 108, 180, 0.18);
+  background: #fffdf8;
+}
+
+.Composer {
+  padding: 12px 14px;
+  --send-width: 76px;
+}
+
+.Composer-input {
+  border: 1px solid rgba(37, 108, 180, 0.24);
+  border-radius: 3px;
+  background: #ffffff;
+  color: #481208;
+  caret-color: #c51708;
+}
+
+.Composer-input:focus {
+  border-color: #1558a2;
+  background: #ffffff;
+}
+
+.Composer-sendBtn {
+  background: linear-gradient(180deg, #d92712, #a81709);
+  border-color: #a81709;
+  border-radius: 3px;
+  color: #ffffff;
+  font-weight: 760;
+}
+
+.Composer-actions .IconBtn {
+  color: #1558a2;
+  background: #e7f2ff;
+}
+
+.portalSidebar {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+}
+
+.quotePanel,
+.storyPanel {
+  border: 1px solid rgba(126, 44, 23, 0.3);
+  background: #fffdf6;
+}
+
+.quotePanel h2,
+.storyPanel h2 {
+  margin: 0;
+  padding: 10px 14px;
+  color: #ffeac0;
+  font-size: 22px;
+  line-height: 1;
+  text-align: center;
+  background: linear-gradient(180deg, #b7342b, #8e2720);
+}
+
+.quotePanel blockquote {
+  margin: 16px;
+  padding: 30px 22px 24px;
+  color: #fff4c9;
+  background:
+    linear-gradient(135deg, rgba(255, 232, 145, 0.18), transparent 40%),
+    #af2b28;
+  border: 7px double rgba(255, 217, 102, 0.84);
+}
+
+.quotePanel p {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.65;
+}
+
+.quotePanel cite {
+  display: block;
+  margin-top: 18px;
+  font-style: normal;
+  font-size: 24px;
+  text-align: right;
+}
+
+.storyPanel h2 {
+  background: linear-gradient(180deg, #4b873f, #2f692e);
+}
+
+.storyPanel ul {
+  margin: 0;
+  padding: 22px 24px 26px 34px;
+  color: #265e24;
+  background:
+    linear-gradient(180deg, rgba(242, 255, 239, 0.9), rgba(217, 249, 205, 0.94)),
+    #ebffe8;
+  border-top: 1px solid rgba(48, 105, 46, 0.24);
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+@media (max-width: 980px) {
+  .appShell {
+    padding: 0;
+  }
+
+  .utilityBar {
+    grid-template-columns: 1fr auto;
+    height: auto;
+    min-height: 38px;
+    gap: 12px;
+    padding: 8px 12px;
+  }
+
+  .searchBox,
+  .utilityBar .utilityLink:nth-of-type(2),
+  .languageStrip span:not(:first-of-type) {
+    display: none;
+  }
+
+  .masthead {
+    min-height: 118px;
+    padding: 18px clamp(18px, 3.2vw, 34px);
+    background-position: 36% 28%;
+  }
+
+  .siteMark {
+    margin-left: clamp(98px, calc(78px + 7.9vw), 190px);
+  }
+
+  .siteMark h1 {
+    font-size: clamp(36px, 10vw, 54px);
+  }
+
+  .siteMark p {
+    font-size: 17px;
+  }
+
+  .portalNav {
+    justify-content: flex-start;
+    gap: 18px;
+    overflow-x: auto;
+    min-height: 46px;
+    font-size: 16px;
+  }
+
+  .portalBody {
+    grid-template-columns: 1fr;
+    padding: 12px;
+  }
+
+  .portalSidebar {
+    display: none;
+  }
+
+  .chatFrame {
+    height: calc(100vh - 306px);
+    height: calc(100dvh - 306px);
+    min-height: 0;
+    max-height: 520px;
+  }
+
+  .sectionBanner.withProgress + .chatFrame {
+    height: calc(100vh - 338px);
+    height: calc(100dvh - 338px);
+  }
+
+  .loadPill {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .utilityBar {
+    font-size: 15px;
+  }
+
+  .portalBody {
+    padding: 0;
+    border-right: 0;
+    border-left: 0;
+    box-shadow: none;
+  }
+
+  .sectionBanner {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px 10px;
+    padding: 10px 12px;
+    border-right: 0;
+    border-left: 0;
+  }
+
+  .sectionBanner strong {
+    grid-column: 1;
+    grid-row: 1;
+    font-size: 17px;
+  }
+
+  .sectionBanner .commandButton {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+  }
+
+  .chatFrame {
+    height: calc(100vh - 302px);
+    height: calc(100dvh - 302px);
+    min-height: 0;
+    max-height: 500px;
+    border-right: 0;
+    border-left: 0;
+  }
+
+  .sectionBanner.withProgress + .chatFrame {
+    height: calc(100vh - 334px);
+    height: calc(100dvh - 334px);
+  }
+
+  .MessageList {
+    padding: 18px 10px 16px;
+  }
+
+  .Composer {
+    padding: 10px;
+  }
+
+  .commandButton {
+    min-width: 42px;
+    width: 42px;
+    padding: 0;
+  }
+
+  .commandButton svg + * {
+    display: none;
+  }
+
+  .Bubble {
+    max-width: calc(100vw - 56px);
+  }
+}

@@ -1,36 +1,95 @@
-# 리설주 1.0
+# RiSolJu 1.0 WebLLM
 
-[Hugging Face 모델](https://huggingface.co/jaehwan02/risolju-1.0)
+Browser UI for running the RiSolJu 1.0 MLC/WebLLM model.
 
-RiSolJu 1.0은 북한식 문체, 어휘, 말투, 배경 맥락을 반영하도록 조정한 한국어 대화형 언어 모델입니다.
+## Run
 
-이 GitHub 저장소는 모델 소개와 Hugging Face 링크를 제공하기 위한 간단한 공개 저장소입니다. 전체 모델 파일, 토크나이저, 설정 파일은 Hugging Face에 업로드되어 있습니다.
+```bash
+npm install
+npm run dev
+```
 
-## 안내
-
-이 모델은 북한식 한국어 말투와 캐릭터 응답 양식을 실험하기 위한 언어 스타일/캐릭터 시뮬레이션입니다. 특정 정치 체제, 인물, 사상 또는 행위를 지지하거나 선전하기 위한 것이 아닙니다.
-
-## 응답 예시
-
-아래 예시는 모델의 말투와 반응성을 보여주기 위한 샘플입니다. 실제 응답은 프롬프트와 생성 설정에 따라 달라질 수 있습니다.
+Open:
 
 ```text
-사용자: 김정은이 누구야?
-
-RiSolJu 1.0: 김정은 동지는 우리 공화국을 이끄시는 최고령도자이시라우. 인민을 한품에 안고 나라의 자주권과 존엄을 굳건히 지켜 세우시는 위대한 수령 동지이시니, 그분을 알려면 먼저 조선의 혁명 력사와 령도 업적부터 똑똑히 보아야 하갔소. 알갔소, 동무?
+http://127.0.0.1:5173
 ```
 
-## 사용 예시
+Chrome with WebGPU support is required.
 
-```python
-from transformers import AutoModelForCausalLM, AutoTokenizer
+## Model Source
 
-model_id = "jaehwan02/risolju-1.0"
+By default, the app loads the bundled local model files from:
 
-tokenizer = AutoTokenizer.from_pretrained(model_id)
-model = AutoModelForCausalLM.from_pretrained(
-    model_id,
-    device_map="auto",
-    torch_dtype="auto",
-)
+```text
+public/mlc/risolju-1.0-mobile-qwen3-1.7b/
 ```
+
+For deployment, point the app at a Hugging Face repo that already contains the MLC model files.
+The model URL must be the directory that contains `mlc-chat-config.json`, `tensor-cache.json`,
+tokenizer files, and `params_shard_*.bin`.
+
+Production builds already default to:
+
+```text
+https://huggingface.co/jaehwan02/risolju-1.0-1.7b-mlc
+```
+
+The setting lives in `.env.production`. It loads model weights from Hugging Face and keeps the
+small local WebGPU wasm library in the deployed app.
+
+Use one of these options in your deployment environment only when you need to override it.
+
+### Direct URLs
+
+```bash
+VITE_MLC_MODEL_ID=RiSolJu-1.0-Mobile-Qwen3-1.7B-q4f16_1-MLC
+VITE_MLC_MODEL_URL=https://huggingface.co/<user>/<repo>/resolve/main/
+VITE_MLC_MODEL_LIB_URL=https://huggingface.co/<user>/<repo>/resolve/main/RiSolJu-1.0-Mobile-Qwen3-1.7B-q4f16_1-ctx2k-webgpu.wasm
+```
+
+If the model files are inside a subdirectory, include that directory in `VITE_MLC_MODEL_URL`:
+
+```bash
+VITE_MLC_MODEL_URL=https://huggingface.co/<user>/<repo>/resolve/main/<model-dir>/
+```
+
+### Hugging Face Short Form
+
+```bash
+VITE_HF_MODEL_REPO=jaehwan02/risolju-1.0-1.7b-mlc
+VITE_HF_MODEL_REVISION=main
+VITE_HF_MODEL_DIR=
+# Optional: set only if the wasm library is also hosted in the Hugging Face repo.
+# VITE_HF_MODEL_LIB_FILE=RiSolJu-1.0-Mobile-Qwen3-1.7B-q4f16_1-ctx2k-webgpu.wasm
+```
+
+Set `VITE_HF_MODEL_DIR` only when the MLC model files are in a subdirectory.
+
+## Build
+
+```bash
+npm run build
+```
+
+For deployment, use:
+
+```bash
+npm run build:deploy
+```
+
+This runs the production build and removes the copied local model weights from `dist/mlc/.../resolve`,
+so the static artifact does not include the multi-GB model. The app will still fetch weights from
+Hugging Face at runtime.
+
+## GitHub Pages
+
+This repo includes `.github/workflows/deploy-pages.yml`. Pushing to `main` builds the app with:
+
+```text
+VITE_BASE_PATH=/risolju-1.0/
+```
+
+The workflow uploads `dist` to GitHub Pages. It also registers a small service worker that adds
+cross-origin isolation headers after the first production load, which WebLLM needs for browser-side
+model execution on static hosting.
