@@ -29,6 +29,8 @@ jobs:
       - run: npm ci
       - run: npm run build:deploy
       - uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
