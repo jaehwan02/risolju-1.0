@@ -1,6 +1,11 @@
-# RiSolJu 1.0 WebLLM
+<img width="1672" height="941" alt="image" src="https://github.com/user-attachments/assets/09d69802-1720-48a0-81f7-7616c2caa981" />
+
+# 리설주 1.0
 
 Browser UI for running the RiSolJu 1.0 MLC/WebLLM model.
+
+- Base model: [jaehwan02/risolju-1.0](https://huggingface.co/jaehwan02/risolju-1.0)
+- MLC/WebLLM model: [jaehwan02/risolju-1.0-1.7b-mlc](https://huggingface.co/jaehwan02/risolju-1.0-1.7b-mlc)
 
 ## Run
 
