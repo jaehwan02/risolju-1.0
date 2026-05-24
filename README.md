@@ -3,11 +3,17 @@
 
 # 리설주 1.0
 
-[Hugging Face 모델](https://huggingface.co/jaehwan02/risolju-1.0)
-
 RiSolJu 1.0은 북한식 문체, 어휘, 말투, 배경 맥락을 반영하도록 조정한 한국어 대화형 언어 모델입니다.
 
 이 GitHub 저장소는 모델 소개와 Hugging Face 링크를 제공하기 위한 간단한 공개 저장소입니다. 전체 모델 파일, 토크나이저, 설정 파일은 Hugging Face에 업로드되어 있습니다.
+
+## 링크
+
+- [risolju-1.0-7b](https://huggingface.co/jaehwan02/risolju-1.0-7b)
+- [risolju-1.0-1.7b](https://huggingface.co/jaehwan02/risolju-1.0-1.7b)
+- [risolju-1.0-1.7b-mlc](https://huggingface.co/jaehwan02/risolju-1.0-1.7b-mlc)
+
+브라우저에서 바로 체험할 수 있는 데모도 제공합니다: [리설주 1.0 데모](https://jaehwan02.github.io/risolju-1.0/)
 
 ## 안내
 
@@ -28,7 +34,7 @@ RiSolJu 1.0: 김정은 동지는 우리 공화국을 이끄시는 최고령도�
 ```python
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-model_id = "jaehwan02/risolju-1.0"
+model_id = "jaehwan02/risolju-1.0-7b"
 
 tokenizer = AutoTokenizer.from_pretrained(model_id)
 model = AutoModelForCausalLM.from_pretrained(
