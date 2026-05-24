@@ -7,13 +7,14 @@ RiSolJu 1.0은 북한식 문체, 어휘, 말투, 배경 맥락을 반영하도�
 
 이 GitHub 저장소는 모델 소개와 Hugging Face 링크를 제공하기 위한 간단한 공개 저장소입니다. 전체 모델 파일, 토크나이저, 설정 파일은 Hugging Face에 업로드되어 있습니다.
 
-## 링크
-
 - [risolju-1.0-7b](https://huggingface.co/jaehwan02/risolju-1.0-7b)
 - [risolju-1.0-1.7b](https://huggingface.co/jaehwan02/risolju-1.0-1.7b)
 - [risolju-1.0-1.7b-mlc](https://huggingface.co/jaehwan02/risolju-1.0-1.7b-mlc)
 
-브라우저에서 바로 체험할 수 있는 데모도 제공합니다: [리설주 1.0 데모](https://jaehwan02.github.io/risolju-1.0/)
+브라우저에서 바로 체험할 수 있는 데모도 제공합니다: 
+## [리설주 1.0 데모](https://jaehwan02.github.io/risolju-1.0/)
+
+<img width="1398" height="1033" alt="리설주 1.0과 대화를 나누고 있는 챗봇 UI" src="https://github.com/user-attachments/assets/20f33d51-4c57-49e0-9ddd-1633bbebb3bc" />
 
 ## 안내
 
