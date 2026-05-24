@@ -95,6 +95,6 @@ This repo includes `.github/workflows/deploy-pages.yml`. Pushing to `main` build
 VITE_BASE_PATH=/risolju-1.0/
 ```
 
-The workflow uploads `dist` to GitHub Pages. It also registers a small service worker that adds
+The workflow uploads `dist` to the `gh-pages` branch for GitHub Pages. It also registers a small service worker that adds
 cross-origin isolation headers after the first production load, which WebLLM needs for browser-side
 model execution on static hosting.
