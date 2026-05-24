@@ -11,6 +11,12 @@ RiSolJu 1.0은 북한식 문체, 어휘, 말투, 배경 맥락을 반영하도�
 - [risolju-1.0-1.7b](https://huggingface.co/jaehwan02/risolju-1.0-1.7b)
 - [risolju-1.0-1.7b-mlc](https://huggingface.co/jaehwan02/risolju-1.0-1.7b-mlc)
 
+## 기반 모델
+
+- `risolju-1.0-7b`: [skt/A.X-4.0-Light](https://huggingface.co/skt/A.X-4.0-Light) 기반 파인튜닝 모델입니다. A.X-4.0-Light는 Qwen2/Qwen2.5 계열 아키텍처의 한국어 7B 모델입니다.
+- `risolju-1.0-1.7b`: [Qwen/Qwen3-1.7B](https://huggingface.co/Qwen/Qwen3-1.7B) 기반 파인튜닝 모델입니다.
+- `risolju-1.0-1.7b-mlc`: `risolju-1.0-1.7b`를 브라우저 WebLLM 실행용 MLC/WebGPU 형식으로 변환한 모델입니다.
+
 브라우저에서 바로 체험할 수 있는 데모도 제공합니다: 
 ## [리설주 1.0 데모](https://jaehwan02.github.io/risolju-1.0/)
 
