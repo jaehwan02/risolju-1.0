@@ -14,7 +14,7 @@ RiSolJu 1.0은 북한식 문체, 어휘, 말투, 배경 맥락을 반영하도�
 브라우저에서 바로 체험할 수 있는 데모도 제공합니다: 
 ## [리설주 1.0 데모](https://jaehwan02.github.io/risolju-1.0/)
 
-<img width="1398" height="1033" alt="리설주 1.0과 대화를 나누고 있는 챗봇 UI" src="https://github.com/user-attachments/assets/20f33d51-4c57-49e0-9ddd-1633bbebb3bc" />
+<img width="1398" height="1005" alt="image" src="https://github.com/user-attachments/assets/5f594b96-a224-40b2-a071-b80966751db6" />
 
 ## 안전 및 사용 고지
 
