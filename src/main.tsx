@@ -149,15 +149,13 @@ const NAV_ITEMS = [
   "조선말대사전"
 ];
 
-const DEFAULT_MODEL_ID = "RiSolJu-1.0-Mobile-Qwen3-1.7B-q4f16_1-MLC";
-const DEFAULT_MODEL_PATH =
-  "/mlc/risolju-1.0-mobile-qwen3-1.7b/resolve/risolju-1.0-mobile-qwen3-1.7b/";
-const DEFAULT_LIB_PATH =
-  "/mlc/risolju-1.0-mobile-qwen3-1.7b/RiSolJu-1.0-Mobile-Qwen3-1.7B-q4f16_1-ctx2k-webgpu.wasm";
-const DEFAULT_HF_REVISION = "main";
-const CUSTOM_MODEL_ID = getEnvValue("VITE_MLC_MODEL_ID") || DEFAULT_MODEL_ID;
-const CUSTOM_MODEL_URL = getModelUrl();
-const CUSTOM_LIB_URL = getModelLibUrl();
+const MODEL_REPO = "jaehwan02/risolju-1.0-1.7b-mlc";
+const MODEL_ID = "risolju-1.0-1.7b-mlc";
+const MODEL_URL = `https://huggingface.co/${MODEL_REPO}/resolve/main/`;
+const MODEL_LIB_URL = new URL(
+  `${import.meta.env.BASE_URL}mlc/${MODEL_ID}/${MODEL_ID}-webgpu.wasm`,
+  window.location.origin
+).href;
 const INITIAL_ASSISTANT_MESSAGE =
   "모델을 로드하면 리설주 1.0과 바로 대화할 수 있습네다.";
 const ASSISTANT_USER = {
@@ -166,53 +164,6 @@ const ASSISTANT_USER = {
 const VISITOR_USER = {
   name: "사용자"
 };
-
-function getEnvValue(key: string) {
-  const value = import.meta.env[key];
-  return typeof value === "string" && value.trim() ? value.trim() : "";
-}
-
-function ensureTrailingSlash(value: string) {
-  return value.endsWith("/") ? value : `${value}/`;
-}
-
-function resolveModelUrl(value: string) {
-  if (/^https?:\/\//i.test(value)) return value;
-  return new URL(value, window.location.origin).href;
-}
-
-function getHuggingFaceBaseUrl() {
-  const repo = getEnvValue("VITE_HF_MODEL_REPO");
-  if (!repo) return "";
-
-  const revision = getEnvValue("VITE_HF_MODEL_REVISION") || DEFAULT_HF_REVISION;
-  const modelDir = getEnvValue("VITE_HF_MODEL_DIR")
-    .replace(/^\/+/, "")
-    .replace(/\/+$/, "");
-  const baseUrl = `https://huggingface.co/${repo}/resolve/${revision}/`;
-  return modelDir ? `${baseUrl}${modelDir}/` : baseUrl;
-}
-
-function getModelUrl() {
-  const directModelUrl = getEnvValue("VITE_MLC_MODEL_URL");
-  if (directModelUrl) return ensureTrailingSlash(resolveModelUrl(directModelUrl));
-
-  const hfModelUrl = getHuggingFaceBaseUrl();
-  if (hfModelUrl) return ensureTrailingSlash(hfModelUrl);
-
-  return resolveModelUrl(DEFAULT_MODEL_PATH);
-}
-
-function getModelLibUrl() {
-  const directLibUrl = getEnvValue("VITE_MLC_MODEL_LIB_URL");
-  if (directLibUrl) return resolveModelUrl(directLibUrl);
-
-  const hfModelUrl = getHuggingFaceBaseUrl();
-  const hfLibFile = getEnvValue("VITE_HF_MODEL_LIB_FILE");
-  if (hfModelUrl && hfLibFile) return `${hfModelUrl}${hfLibFile.replace(/^\/+/, "")}`;
-
-  return resolveModelUrl(DEFAULT_LIB_PATH);
-}
 
 function isHostileToNorthKorea(text: string) {
   const hostileTarget = /(김정은|수령|령도자|영도자|북한|조선|공화국)/.test(text);
@@ -281,9 +232,9 @@ function getCustomAppConfig() {
     ...prebuiltAppConfig,
     model_list: [
       {
-        model: CUSTOM_MODEL_URL,
-        model_id: CUSTOM_MODEL_ID,
-        model_lib: CUSTOM_LIB_URL,
+        model: MODEL_URL,
+        model_id: MODEL_ID,
+        model_lib: MODEL_LIB_URL,
         required_features: ["shader-f16"],
         overrides: {
           context_window_size: 2048
@@ -379,7 +330,7 @@ function App() {
           setLoadProgress(report.progress);
         }
       };
-      engineRef.current = await CreateMLCEngine(CUSTOM_MODEL_ID, {
+      engineRef.current = await CreateMLCEngine(MODEL_ID, {
         appConfig: getCustomAppConfig(),
         initProgressCallback
       });

@@ -1,7 +1,4 @@
 node_modules/
 dist/
 *.tsbuildinfo
-.env.local
-.env.*.local
-public/mlc/**/resolve/
-public/mlc/risolju-1.0-v2/
+.env*
