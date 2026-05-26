@@ -52,10 +52,25 @@ function getIp(request) {
   );
 }
 
-function getRequestContext(request) {
+function toHex(bytes) {
+  return Array.from(bytes)
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+async function hashIp(ip, salt = "") {
+  if (!ip || ip === "unknown") return "unknown";
+
+  const data = new TextEncoder().encode(`${salt}:${ip}`);
+  const digest = await crypto.subtle.digest("SHA-256", data);
+  return `sha256:${toHex(new Uint8Array(digest))}`;
+}
+
+async function getRequestContext(request, env) {
   const cf = request.cf || {};
+  const ip = getIp(request);
   return {
-    ip: getIp(request),
+    ipHash: await hashIp(ip, env.IP_HASH_SALT),
     country: cf.country || null,
     region: cf.region || null,
     city: cf.city || null,
@@ -93,7 +108,7 @@ function buildDiscordPayload(event, requestContext) {
   ]);
 
   const locationSummary = formatLines([
-    ["IP", requestContext.ip],
+    ["IP 해시", requestContext.ipHash],
     ["도시", requestContext.city],
     ["지역", requestContext.region],
     ["국가", requestContext.country],
@@ -178,7 +193,8 @@ export default {
       return new Response("Invalid JSON", { status: 400, headers });
     }
 
-    const discordPayload = buildDiscordPayload(event, getRequestContext(request));
+    const requestContext = await getRequestContext(request, env);
+    const discordPayload = buildDiscordPayload(event, requestContext);
     const discordResponse = await fetch(env.DISCORD_WEBHOOK_URL, {
       method: "POST",
       headers: {

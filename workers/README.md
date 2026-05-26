@@ -7,6 +7,7 @@ Required runtime secret:
 
 ```sh
 wrangler secret put DISCORD_WEBHOOK_URL
+wrangler secret put IP_HASH_SALT
 ```
 
 Recommended runtime variable:
