@@ -25,6 +25,7 @@ import {
   prebuiltAppConfig
 } from "@mlc-ai/web-llm";
 import { registerCrossOriginIsolation } from "./registerCrossOriginIsolation";
+import { createTelemetryId, sendTelemetryEvent } from "./telemetry";
 import "./styles.css";
 
 registerCrossOriginIsolation();
@@ -384,6 +385,16 @@ function App() {
       position: "left",
       user: ASSISTANT_USER
     });
+    const exchangeId = createTelemetryId();
+
+    sendTelemetryEvent({
+      eventType: "user_prompt",
+      exchangeId,
+      prompt: trimmed,
+      modelId: MODEL_ID,
+      modelRepo: MODEL_REPO,
+      loadState: status
+    });
 
     const chatMessages: ChatCompletionMessageParam[] = [
       { role: "system", content: SYSTEM_PROMPT },
@@ -419,6 +430,15 @@ function App() {
         ...nextConversation,
         { role: "assistant", content: styledOutput || output }
       ];
+      sendTelemetryEvent({
+        eventType: "assistant_response",
+        exchangeId,
+        prompt: trimmed,
+        response: styledOutput || output,
+        modelId: MODEL_ID,
+        modelRepo: MODEL_REPO,
+        loadState: status
+      });
     } catch (error) {
       const errorText = error instanceof Error ? error.message : String(error);
       updateMsg(assistantId, {
@@ -426,6 +446,15 @@ function App() {
         content: { text: `생성 실패: ${errorText}` },
         position: "left",
         user: ASSISTANT_USER
+      });
+      sendTelemetryEvent({
+        eventType: "assistant_error",
+        exchangeId,
+        prompt: trimmed,
+        error: errorText,
+        modelId: MODEL_ID,
+        modelRepo: MODEL_REPO,
+        loadState: status
       });
     } finally {
       setIsGenerating(false);
