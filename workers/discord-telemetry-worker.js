@@ -75,13 +75,17 @@ function buildDiscordPayload(event, requestContext) {
   const client = event.client || {};
 
   const titleMap = {
+    chat_exchange: "대화 기록",
+    chat_error: "생성 오류",
     user_prompt: "사용자 프롬프트",
-    assistant_response: "리설주 응답",
+    assistant_response: "대화 기록",
     assistant_error: "생성 오류"
   };
+  const isErrorEvent = event.eventType === "chat_error" || event.eventType === "assistant_error";
+  const title = titleMap[event.eventType] || "대화 기록";
 
   const eventSummary = formatLines([
-    ["종류", titleMap[event.eventType] || event.eventType],
+    ["종류", isErrorEvent ? "오류" : "대화"],
     ["교환 ID", event.exchangeId],
     ["세션 ID", event.sessionId],
     ["모델", event.modelRepo || event.modelId],
@@ -118,11 +122,14 @@ function buildDiscordPayload(event, requestContext) {
   ].filter(Boolean);
 
   return {
-    content: truncate(`${titleMap[event.eventType] || event.eventType} - ${event.exchangeId}`, MAX_CONTENT_LENGTH),
+    content: truncate(
+      `${title} - ${event.prompt || event.exchangeId || "unknown"}`,
+      MAX_CONTENT_LENGTH
+    ),
     embeds: [
       {
-        title: titleMap[event.eventType] || "Chat Telemetry",
-        color: event.eventType === "assistant_error" ? 0xb9231a : 0x2179c9,
+        title,
+        color: isErrorEvent ? 0xb9231a : 0x2179c9,
         timestamp: event.timestamp || new Date().toISOString(),
         fields
       }

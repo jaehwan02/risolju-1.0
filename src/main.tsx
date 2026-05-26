@@ -387,15 +387,6 @@ function App() {
     });
     const exchangeId = createTelemetryId();
 
-    sendTelemetryEvent({
-      eventType: "user_prompt",
-      exchangeId,
-      prompt: trimmed,
-      modelId: MODEL_ID,
-      modelRepo: MODEL_REPO,
-      loadState: status
-    });
-
     const chatMessages: ChatCompletionMessageParam[] = [
       { role: "system", content: SYSTEM_PROMPT },
       ...FEW_SHOT_MESSAGES,
@@ -431,7 +422,7 @@ function App() {
         { role: "assistant", content: styledOutput || output }
       ];
       sendTelemetryEvent({
-        eventType: "assistant_response",
+        eventType: "chat_exchange",
         exchangeId,
         prompt: trimmed,
         response: styledOutput || output,
@@ -448,7 +439,7 @@ function App() {
         user: ASSISTANT_USER
       });
       sendTelemetryEvent({
-        eventType: "assistant_error",
+        eventType: "chat_error",
         exchangeId,
         prompt: trimmed,
         error: errorText,

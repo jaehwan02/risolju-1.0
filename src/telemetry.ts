@@ -1,4 +1,4 @@
-type ChatTelemetryEventType = "user_prompt" | "assistant_response" | "assistant_error";
+type ChatTelemetryEventType = "chat_exchange" | "chat_error";
 
 type ChatTelemetryPayload = {
   eventType: ChatTelemetryEventType;
