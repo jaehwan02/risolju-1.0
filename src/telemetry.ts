@@ -16,6 +16,17 @@ const TELEMETRY_SESSION_KEY = "risolju.telemetry.session";
 
 export const telemetryEnabled = TELEMETRY_ENDPOINT.length > 0;
 
+type UserAgentBrand = {
+  brand: string;
+  version: string;
+};
+
+type UserAgentDataLike = {
+  brands?: UserAgentBrand[];
+  mobile?: boolean;
+  platform?: string;
+};
+
 export function createTelemetryId() {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
     return crypto.randomUUID();
@@ -36,10 +47,67 @@ function getSessionId() {
   return sessionId;
 }
 
+function getDeviceType(userAgent: string, isMobileHint?: boolean) {
+  if (/ipad|tablet|playbook|silk/i.test(userAgent)) return "태블릿";
+  if (isMobileHint || /mobile|iphone|ipod|android.*mobile/i.test(userAgent)) return "모바일";
+  return "데스크톱";
+}
+
+function getOsInfo(userAgent: string, platform?: string) {
+  const source = `${platform ?? ""} ${userAgent}`;
+
+  const android = userAgent.match(/Android\s+([\d.]+)/i);
+  if (android) return `Android ${android[1]}`;
+
+  const ios = userAgent.match(/(?:iPhone|iPad|iPod).*OS\s+([\d_]+)/i);
+  if (ios) return `iOS ${ios[1].replace(/_/g, ".")}`;
+
+  const mac = userAgent.match(/Mac OS X\s+([\d_]+)/i);
+  if (mac) return `macOS ${mac[1].replace(/_/g, ".")}`;
+
+  const windows = userAgent.match(/Windows NT\s+([\d.]+)/i);
+  if (windows) return `Windows ${windows[1]}`;
+
+  if (/linux/i.test(source)) return "Linux";
+  return platform || "알 수 없음";
+}
+
+function getBrowserInfo(userAgent: string, brands?: UserAgentBrand[]) {
+  const edge = userAgent.match(/Edg\/([\d.]+)/i);
+  if (edge) return `Microsoft Edge ${edge[1]}`;
+
+  const chrome = userAgent.match(/Chrome\/([\d.]+)/i);
+  if (chrome) return `Chrome ${chrome[1]}`;
+
+  const firefox = userAgent.match(/Firefox\/([\d.]+)/i);
+  if (firefox) return `Firefox ${firefox[1]}`;
+
+  const safari = userAgent.match(/Version\/([\d.]+).*Safari/i);
+  if (safari) return `Safari ${safari[1]}`;
+
+  const brand = brands?.find((item) => !/not.?a.?brand/i.test(item.brand));
+  return brand ? `${brand.brand} ${brand.version}` : "알 수 없음";
+}
+
+function getDeviceDetails() {
+  const navigatorWithUserAgentData = navigator as Navigator & {
+    userAgentData?: UserAgentDataLike;
+  };
+  const userAgent = navigator.userAgent || "";
+  const userAgentData = navigatorWithUserAgentData.userAgentData;
+
+  return {
+    type: getDeviceType(userAgent, userAgentData?.mobile),
+    os: getOsInfo(userAgent, userAgentData?.platform),
+    browser: getBrowserInfo(userAgent, userAgentData?.brands)
+  };
+}
+
 function getClientDetails() {
   return {
     url: location.href,
-    referrer: document.referrer || null
+    referrer: document.referrer || null,
+    device: getDeviceDetails()
   };
 }
 

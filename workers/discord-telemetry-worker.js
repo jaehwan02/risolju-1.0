@@ -111,12 +111,19 @@ function buildDiscordPayload(event, requestContext) {
     ["URL", client.url],
     ["이전 페이지", client.referrer || "없음"]
   ]);
+  const device = client.device || {};
+  const deviceSummary = formatLines([
+    ["기기", device.type],
+    ["OS", device.os],
+    ["브라우저", device.browser]
+  ]);
 
   const fields = [
     field("기록 요약", eventSummary),
     field("사용자 입력", event.prompt),
     field("리설주 응답", event.response),
     field("오류", event.error),
+    field("기기/OS", deviceSummary),
     field("접속 위치", locationSummary),
     field("페이지", pageSummary)
   ].filter(Boolean);
