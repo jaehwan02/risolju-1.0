@@ -18,6 +18,9 @@ CREATE TABLE IF NOT EXISTS analytics_events (
   browser TEXT,
   page_url TEXT,
   referrer TEXT,
+  prompt_text TEXT,
+  response_text TEXT,
+  error_text TEXT,
   metadata_json TEXT
 );
 
@@ -29,4 +32,3 @@ CREATE INDEX IF NOT EXISTS idx_analytics_events_type_created_at
 
 CREATE INDEX IF NOT EXISTS idx_analytics_events_visitor_created_at
   ON analytics_events (visitor_hash, created_at);
-

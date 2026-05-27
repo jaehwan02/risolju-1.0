@@ -38,3 +38,20 @@ SELECT
 FROM analytics_events
 GROUP BY day
 ORDER BY day DESC;
+
+-- Recent stored conversation logs.
+SELECT
+  created_at,
+  event_type,
+  prompt_text,
+  response_text,
+  error_text,
+  visitor_hash,
+  country,
+  device_type,
+  os,
+  browser
+FROM analytics_events
+WHERE event_type IN ('chat_exchange', 'chat_error')
+ORDER BY created_at DESC
+LIMIT 50;

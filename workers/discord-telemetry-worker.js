@@ -111,6 +111,21 @@ function getMetadataJson(event) {
   return truncate(JSON.stringify(event.metadata), 4000);
 }
 
+function shouldStoreMessageText(event) {
+  return [
+    "chat_exchange",
+    "chat_error",
+    "user_prompt",
+    "assistant_response",
+    "assistant_error"
+  ].includes(event.eventType);
+}
+
+function getStoredMessageText(event, key) {
+  if (!shouldStoreMessageText(event)) return null;
+  return toNullableString(event[key]);
+}
+
 async function recordAnalyticsEvent(event, requestContext, env) {
   if (!env.ANALYTICS_DB) return;
 
@@ -139,8 +154,11 @@ async function recordAnalyticsEvent(event, requestContext, env) {
       browser,
       page_url,
       referrer,
+      prompt_text,
+      response_text,
+      error_text,
       metadata_json
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   )
     .bind(
       getStoredEventType(event),
@@ -160,6 +178,9 @@ async function recordAnalyticsEvent(event, requestContext, env) {
       toNullableString(device.browser),
       toNullableString(client.url),
       toNullableString(client.referrer),
+      getStoredMessageText(event, "prompt"),
+      getStoredMessageText(event, "response"),
+      getStoredMessageText(event, "error"),
       getMetadataJson(event)
     )
     .run();

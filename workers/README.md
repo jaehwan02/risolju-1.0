@@ -26,6 +26,7 @@ wrangler d1 execute risolju-analytics --remote --file workers/analytics-schema.s
 ```
 
 Useful DAU, MAU, and funnel queries are in `workers/analytics-queries.sql`.
+Conversation prompt, response, and error text is stored for chat events.
 
 After the worker is deployed, set this repository variable before deploying the Pages app:
 
