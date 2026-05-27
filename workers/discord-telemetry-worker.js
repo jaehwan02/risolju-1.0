@@ -59,9 +59,13 @@ function toHex(bytes) {
 }
 
 async function hashIp(ip, salt = "") {
-  if (!ip || ip === "unknown") return "unknown";
+  return hashValue(ip, salt, "unknown");
+}
 
-  const data = new TextEncoder().encode(`${salt}:${ip}`);
+async function hashValue(value, salt = "", fallback = null) {
+  if (!value || value === "unknown") return fallback;
+
+  const data = new TextEncoder().encode(`${salt}:${value}`);
   const digest = await crypto.subtle.digest("SHA-256", data);
   return `sha256:${toHex(new Uint8Array(digest))}`;
 }
@@ -79,6 +83,86 @@ async function getRequestContext(request, env) {
     latitude: cf.latitude || null,
     longitude: cf.longitude || null
   };
+}
+
+function getStoredEventType(event) {
+  if (event.eventType === "analytics_event") {
+    return event.analyticsEvent || "analytics_event";
+  }
+  return event.eventType || "unknown";
+}
+
+function shouldForwardToDiscord(event) {
+  return [
+    "chat_exchange",
+    "chat_error",
+    "user_prompt",
+    "assistant_response",
+    "assistant_error"
+  ].includes(event.eventType);
+}
+
+function toNullableString(value) {
+  return hasValue(value) ? String(value) : null;
+}
+
+function getMetadataJson(event) {
+  if (!event.metadata || typeof event.metadata !== "object") return null;
+  return truncate(JSON.stringify(event.metadata), 4000);
+}
+
+async function recordAnalyticsEvent(event, requestContext, env) {
+  if (!env.ANALYTICS_DB) return;
+
+  const client = event.client || {};
+  const device = client.device || {};
+  const visitorSalt = env.VISITOR_HASH_SALT || env.IP_HASH_SALT || "";
+  const visitorHash = await hashValue(event.visitorId, visitorSalt);
+  const sessionHash = await hashValue(event.sessionId, visitorSalt);
+
+  await env.ANALYTICS_DB.prepare(
+    `INSERT INTO analytics_events (
+      event_type,
+      visitor_hash,
+      session_hash,
+      ip_hash,
+      exchange_id,
+      model_id,
+      model_repo,
+      load_state,
+      country,
+      region,
+      city,
+      timezone,
+      device_type,
+      os,
+      browser,
+      page_url,
+      referrer,
+      metadata_json
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  )
+    .bind(
+      getStoredEventType(event),
+      visitorHash,
+      sessionHash,
+      toNullableString(requestContext.ipHash),
+      toNullableString(event.exchangeId),
+      toNullableString(event.modelId),
+      toNullableString(event.modelRepo),
+      toNullableString(event.loadState),
+      toNullableString(requestContext.country),
+      toNullableString(requestContext.region),
+      toNullableString(requestContext.city),
+      toNullableString(requestContext.timezone),
+      toNullableString(device.type),
+      toNullableString(device.os),
+      toNullableString(device.browser),
+      toNullableString(client.url),
+      toNullableString(client.referrer),
+      getMetadataJson(event)
+    )
+    .run();
 }
 
 function field(name, value, inline = false) {
@@ -160,7 +244,7 @@ function buildDiscordPayload(event, requestContext) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const origin = request.headers.get("Origin");
     const allowedOrigins = getAllowedOrigins(env);
     const headers = corsHeaders(origin, allowedOrigins);
@@ -177,10 +261,6 @@ export default {
       return new Response("Forbidden", { status: 403, headers });
     }
 
-    if (!env.DISCORD_WEBHOOK_URL) {
-      return new Response("Webhook secret is not configured", { status: 500, headers });
-    }
-
     const contentLength = Number(request.headers.get("Content-Length") || "0");
     if (contentLength > 64_000) {
       return new Response("Payload too large", { status: 413, headers });
@@ -194,6 +274,29 @@ export default {
     }
 
     const requestContext = await getRequestContext(request, env);
+    const analyticsWrite = recordAnalyticsEvent(event, requestContext, env).catch((error) => {
+      console.error("Analytics write failed.", error);
+    });
+    if (ctx?.waitUntil) {
+      ctx.waitUntil(analyticsWrite);
+    } else {
+      await analyticsWrite;
+    }
+
+    if (!shouldForwardToDiscord(event)) {
+      return new Response(JSON.stringify({ ok: true }), {
+        status: 200,
+        headers: {
+          ...headers,
+          "Content-Type": "application/json"
+        }
+      });
+    }
+
+    if (!env.DISCORD_WEBHOOK_URL) {
+      return new Response("Webhook secret is not configured", { status: 500, headers });
+    }
+
     const discordPayload = buildDiscordPayload(event, requestContext);
     const discordResponse = await fetch(env.DISCORD_WEBHOOK_URL, {
       method: "POST",

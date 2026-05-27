@@ -19,6 +19,7 @@ jobs:
     env:
       VITE_BASE_PATH: /risolju-1.0/
       VITE_TELEMETRY_ENDPOINT: ${{ vars.VITE_TELEMETRY_ENDPOINT }}
+      VITE_CF_WEB_ANALYTICS_TOKEN: ${{ vars.VITE_CF_WEB_ANALYTICS_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

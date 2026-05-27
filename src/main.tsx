@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import ChatUIRuntime, {
   type BubbleProps,
@@ -24,10 +24,12 @@ import {
   type InitProgressReport,
   prebuiltAppConfig
 } from "@mlc-ai/web-llm";
+import { installCloudflareWebAnalytics } from "./cloudflareWebAnalytics";
 import { registerCrossOriginIsolation } from "./registerCrossOriginIsolation";
-import { createTelemetryId, sendTelemetryEvent } from "./telemetry";
+import { createTelemetryId, sendAnalyticsEvent, sendTelemetryEvent } from "./telemetry";
 import "./styles.css";
 
+installCloudflareWebAnalytics();
 registerCrossOriginIsolation();
 
 type ChatUIRuntimeShape = {
@@ -332,9 +334,22 @@ function App() {
   const showLoadProgress = status === "loading" || status === "error";
   const canSend = status === "ready" && !isGenerating;
 
+  useEffect(() => {
+    sendAnalyticsEvent("app_open", {
+      modelId: MODEL_ID,
+      modelRepo: MODEL_REPO,
+      loadState: "idle"
+    });
+  }, []);
+
   async function loadModel() {
     if (status === "loading" || status === "ready") return;
 
+    sendAnalyticsEvent("model_load_clicked", {
+      modelId: MODEL_ID,
+      modelRepo: MODEL_REPO,
+      loadState: status
+    });
     setStatus("loading");
     setProgress("대화마당 차리는 중...");
     setLoadProgress(0);
@@ -352,10 +367,24 @@ function App() {
       setStatus("ready");
       setProgress("리설주 동무 출석");
       setLoadProgress(1);
+      sendAnalyticsEvent("model_loaded", {
+        modelId: MODEL_ID,
+        modelRepo: MODEL_REPO,
+        loadState: "ready"
+      });
     } catch (error) {
+      const errorText = error instanceof Error ? error.message : String(error);
       console.error(error);
       setStatus("error");
-      setProgress(error instanceof Error ? error.message : String(error));
+      setProgress(errorText);
+      sendAnalyticsEvent("model_load_error", {
+        modelId: MODEL_ID,
+        modelRepo: MODEL_REPO,
+        loadState: "error",
+        metadata: {
+          error: errorText
+        }
+      });
     }
   }
 

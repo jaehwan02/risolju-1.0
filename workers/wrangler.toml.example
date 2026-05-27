@@ -4,3 +4,8 @@ compatibility_date = "2026-05-26"
 
 [vars]
 ALLOWED_ORIGINS = "https://jaehwan02.github.io,http://127.0.0.1:5173"
+
+[[d1_databases]]
+binding = "ANALYTICS_DB"
+database_name = "risolju-analytics"
+database_id = "replace-with-your-d1-database-id"

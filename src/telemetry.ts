@@ -1,18 +1,23 @@
-type ChatTelemetryEventType = "chat_exchange" | "chat_error";
+type ChatTelemetryEventType = "chat_exchange" | "chat_error" | "analytics_event";
+
+type TelemetryMetadata = Record<string, string | number | boolean | null | undefined>;
 
 type ChatTelemetryPayload = {
   eventType: ChatTelemetryEventType;
-  exchangeId: string;
+  exchangeId?: string;
+  analyticsEvent?: string;
   prompt?: string;
   response?: string;
   error?: string;
   modelId: string;
   modelRepo: string;
   loadState: string;
+  metadata?: TelemetryMetadata;
 };
 
 const TELEMETRY_ENDPOINT = import.meta.env.VITE_TELEMETRY_ENDPOINT?.trim() ?? "";
 const TELEMETRY_SESSION_KEY = "risolju.telemetry.session";
+const TELEMETRY_VISITOR_KEY = "risolju.telemetry.visitor";
 
 export const telemetryEnabled = TELEMETRY_ENDPOINT.length > 0;
 
@@ -45,6 +50,19 @@ function getSessionId() {
   const sessionId = createTelemetryId();
   sessionStorage.setItem(TELEMETRY_SESSION_KEY, sessionId);
   return sessionId;
+}
+
+function getVisitorId() {
+  if (typeof localStorage === "undefined") {
+    return createTelemetryId();
+  }
+
+  const existing = localStorage.getItem(TELEMETRY_VISITOR_KEY);
+  if (existing) return existing;
+
+  const visitorId = createTelemetryId();
+  localStorage.setItem(TELEMETRY_VISITOR_KEY, visitorId);
+  return visitorId;
 }
 
 function getDeviceType(userAgent: string, isMobileHint?: boolean) {
@@ -116,6 +134,7 @@ export function sendTelemetryEvent(payload: ChatTelemetryPayload) {
 
   const body = {
     ...payload,
+    visitorId: getVisitorId(),
     sessionId: getSessionId(),
     timestamp: new Date().toISOString(),
     client: getClientDetails()
@@ -131,5 +150,16 @@ export function sendTelemetryEvent(payload: ChatTelemetryPayload) {
     keepalive: serializedBody.length < 60_000
   }).catch((error) => {
     console.warn("Telemetry delivery failed.", error);
+  });
+}
+
+export function sendAnalyticsEvent(
+  analyticsEvent: string,
+  payload: Omit<ChatTelemetryPayload, "eventType" | "analyticsEvent" | "exchangeId" | "prompt" | "response" | "error">
+) {
+  sendTelemetryEvent({
+    ...payload,
+    eventType: "analytics_event",
+    analyticsEvent
   });
 }
